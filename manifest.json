@@ -1,6 +1,6 @@
 {
-  "name": "Format Link",
-  "version": "3.0.1",
+  "name": "Format Link (modified)",
+  "version": "0.0.1",
   "manifest_version": 2,
   "description": "Format a link and copy it to the clipboard.",
   "icons": {
@@ -10,14 +10,17 @@
   },
   "applications": {
     "gecko": {
-      "id": "pocemhmkmchpgamlnocemnbhlcjcbjgg@chrome-store-foxified-2931337014"
+      "id": "{C168D536-C3EE-4C6E-8D2E-70EC8EBFF594}"
     }
   },
   "background": {
-    "scripts": [
-      "common.js",
-      "background.js"
-    ]
+    "scripts": ["common.js", "background.js"]
+  },
+  "page_action": {
+    "default_icon": "icon.png",
+    "default_title": "Format Link",
+    "default_popup": "popup.html",
+    "browser_style": true
   },
   "browser_action": {
     "default_icon": "icon.png",
