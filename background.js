@@ -3,11 +3,7 @@ async function saveDefaultFormat(formatID) {
 }
 
 function isLinkable(tab) {
-  return (
-    tab.url &&
-    tab.title &&
-    (!tab.favIconUrl || !tab.favIconUrl.startsWith("chrome://"))
-  );
+  return tab.url && tab.url.match(/^https?:/i);
 }
 
 function showHidePageAction(tab) {
