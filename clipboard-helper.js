@@ -22,9 +22,10 @@ function FormatLink_formatLinkAsText(format, newline, linkUrl, linkText) {
   }
 
   function formatURL(format, url, title, selectedText, newline) {
-    let text = '';
+    let text = "";
     let work;
-    let i = 0, len = format.length;
+    let i = 0,
+      len = format.length;
 
     function parseLiteral(str) {
       if (format.substr(i, str.length) === str) {
@@ -36,10 +37,10 @@ function FormatLink_formatLinkAsText(format, newline, linkUrl, linkText) {
     }
 
     function parseString() {
-      let str = '';
+      let str = "";
       if (parseLiteral('"')) {
         while (i < len) {
-          if (parseLiteral('\\')) {
+          if (parseLiteral("\\")) {
             if (i < len) {
               str += format.substr(i++, 1);
             } else {
@@ -63,44 +64,44 @@ function FormatLink_formatLinkAsText(format, newline, linkUrl, linkText) {
     function processVar(value) {
       let work = value;
       while (i < len) {
-        if (parseLiteral('.s(')) {
+        if (parseLiteral(".s(")) {
           let arg1 = parseString();
-          if (arg1 && parseLiteral(',')) {
+          if (arg1 && parseLiteral(",")) {
             let arg2 = parseString();
-            if (arg2 && parseLiteral(')')) {
-              let regex = new RegExp(arg1, 'g');
+            if (arg2 && parseLiteral(")")) {
+              let regex = new RegExp(arg1, "g");
               work = work.replace(regex, arg2);
             } else {
-              throw new Error('parse error');
+              throw new Error("parse error");
             }
           } else {
-            throw new Error('parse error');
+            throw new Error("parse error");
           }
-        } else if (parseLiteral('}}')) {
+        } else if (parseLiteral("}}")) {
           text += work;
           return;
         } else {
-          throw new Error('parse error');
+          throw new Error("parse error");
         }
       }
     }
 
     while (i < len) {
-      if (parseLiteral('\\')) {
-        if (parseLiteral('n')) {
+      if (parseLiteral("\\")) {
+        if (parseLiteral("n")) {
           text += newline;
-        //  isWindows ? "\r\n" : "\n";
-        } else if (parseLiteral('t')) {
+          //  isWindows ? "\r\n" : "\n";
+        } else if (parseLiteral("t")) {
           text += "\t";
         } else {
           text += format.substr(i++, 1);
         }
-      } else if (parseLiteral('{{')) {
-        if (parseLiteral('title')) {
+      } else if (parseLiteral("{{")) {
+        if (parseLiteral("title")) {
           processVar(title);
-        } else if (parseLiteral('url')) {
+        } else if (parseLiteral("url")) {
           processVar(url);
-        } else if (parseLiteral('text')) {
+        } else if (parseLiteral("text")) {
           processVar(selectedText ? selectedText : title);
         }
       } else {
