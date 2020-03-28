@@ -2,7 +2,33 @@ async function saveDefaultFormat(formatID) {
   await browser.storage.sync.set({ defaultFormat: formatID });
 }
 
+function isLinkable(tab) {
+  return (
+    tab.url &&
+    tab.title &&
+    (!tab.favIconUrl || !tab.favIconUrl.startsWith("chrome://"))
+  );
+}
+
+function showHidePageAction(tab) {
+  if (tab) {
+    if (isLinkable(tab)) {
+      browser.pageAction.show(tab.id);
+      browser.browserAction.enable(tab.id);
+    } else {
+      browser.pageAction.hide(tab.id);
+      browser.browserAction.disable(tab.id);
+    }
+  }
+}
+
 (async function() {
+  browser.tabs.query({}).then(tabs => tabs.forEach(showHidePageAction));
+
+  browser.tabs.onUpdated.addListener((id, changeInfo, tab) =>
+    showHidePageAction(tab)
+  );
+
   browser.commands.onCommand.addListener(async command => {
     try {
       const prefix = "copy-link-in-format";
