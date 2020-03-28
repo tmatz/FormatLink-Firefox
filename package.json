@@ -1,0 +1,12 @@
+{
+  "name": "formatlink-firefox-modified",
+  "version": "0.0.1",
+  "scripts": {
+    "run": "web-ext run",
+    "build": "web-ext build --overwrite-dest -i package*.json",
+    "sign": "web-ext sign "
+  },
+  "devDependencies": {
+    "web-ext": "^4.1.0"
+  }
+}
