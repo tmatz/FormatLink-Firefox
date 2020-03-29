@@ -1,6 +1,5 @@
 function formatURL(format, url, title, text, newline) {
   const len = format.length;
-  let result = "";
   let i = 0;
 
   function parseLiteral(str) {
@@ -47,14 +46,15 @@ function formatURL(format, url, title, text, newline) {
           throw new Error("parse error");
         }
       } else if (parseLiteral("}}")) {
-        result += work;
-        return;
+        break;
       } else {
         throw new Error("parse error");
       }
     }
+    return work;
   }
 
+  let result = "";
   while (i < len) {
     if (parseLiteral("\\")) {
       if (parseLiteral("n")) {
@@ -67,11 +67,11 @@ function formatURL(format, url, title, text, newline) {
       }
     } else if (parseLiteral("{{")) {
       if (parseLiteral("title")) {
-        processVar(title);
+        result += processVar(title);
       } else if (parseLiteral("url")) {
-        processVar(url);
+        result += processVar(url);
       } else if (parseLiteral("text")) {
-        processVar(text ? text : title);
+        result += processVar(text ? text : title);
       }
     } else {
       result += format.substr(i++, 1);
