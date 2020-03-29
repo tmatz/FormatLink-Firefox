@@ -1,4 +1,4 @@
-function formatURL(format, url, title, text, newline) {
+function formatURL(format, url, title, text, href, newline) {
   const len = format.length;
   let i = 0;
 
@@ -74,7 +74,9 @@ function formatURL(format, url, title, text, newline) {
       } else if (parseLiteral("url")) {
         result += processVar(url);
       } else if (parseLiteral("text")) {
-        result += processVar(text ? text : title);
+        result += processVar(text);
+      } else if (parseLiteral("href")) {
+        result += processVar(href);
       }
     } else {
       result += format.substr(i++, 1);

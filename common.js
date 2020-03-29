@@ -74,6 +74,7 @@ async function copyLinkToClipboard(format, linkUrl, linkText) {
       href ?? linkUrl ?? url ?? "",
       title ?? "",
       text ?? linkText ?? title ?? "",
+      url ?? "",
       newline
     );
   } catch (err) {
