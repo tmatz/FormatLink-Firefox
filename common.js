@@ -43,21 +43,26 @@ function getFormatCount(options) {
   return i - 1;
 }
 
+async function requireContentScript() {
+  const results = await browser.tabs.executeScript({
+    code: "typeof FormatLink_copyLinkToClipboard === 'function';"
+  });
+  // The content script's last expression will be true if the function
+  // has been defined. If this is not the case, then we need to run
+  // content-helper.js to define function copyToClipboard.
+  if (!results || results[0] !== true) {
+    await browser.tabs.executeScript({
+      file: "content-helper.js"
+    });
+  }
+  // content-helper.js defines functions FormatLink_formatLinkAsText
+  // and FormatLink_copyLinkToClipboard.
+}
+
 async function copyLinkToClipboard(format, linkUrl, linkText) {
   try {
-    const results = await browser.tabs.executeScript({
-      code: "typeof FormatLink_copyLinkToClipboard === 'function';"
-    });
-    // The content script's last expression will be true if the function
-    // has been defined. If this is not the case, then we need to run
-    // content-helper.js to define function copyToClipboard.
-    if (!results || results[0] !== true) {
-      await browser.tabs.executeScript({
-        file: "content-helper.js"
-      });
-    }
-    // content-helper.js defines functions FormatLink_formatLinkAsText
-    // and FormatLink_copyLinkToClipboard.
+    await requireContentScript();
+
     const newline = browser.runtime.PlatformOs === "win" ? "\r\n" : "\n";
 
     const [{ title, url, text, href }] = await browser.tabs.executeScript({
