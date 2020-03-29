@@ -44,7 +44,9 @@ function FormatLink_formatLinkAsText(format, newline, linkUrl, linkText) {
           i = endIndex + 1;
           return format.substr(startIndex, endIndex - startIndex);
         } else {
-          throw new Error('parse error expected "');
+          const ellipsis = format.length > 5 ? "..." : "";
+          const head = format.substr(startIndex, 5) + ellipsis;
+          throw new Error(`parse error: regexp not closed -- ${quote}${head}`);
         }
       } else {
         return null;
