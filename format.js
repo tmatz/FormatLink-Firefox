@@ -25,7 +25,7 @@ function formatURL(format, url, title, text, href, newline) {
         throw new Error(`parse error: regexp not closed -- ${quote}${head}`);
       }
     } else {
-      throw new Error(`unexpected EOL`);
+      throw new Error("unexpected EOL");
     }
   }
 
