@@ -33,6 +33,7 @@ function formatURL(format, url, title, text, newline) {
     let work = value;
     while (i < len) {
       if (parseLiteral(".s(")) {
+        const sIndex = i;
         let arg1 = parseString();
         if (arg1 && parseLiteral(",")) {
           let arg2 = parseString();
@@ -40,15 +41,17 @@ function formatURL(format, url, title, text, newline) {
             let regex = new RegExp(arg1, "g");
             work = work.replace(regex, arg2);
           } else {
-            throw new Error("parse error");
+            const script = format.substr(sIndex, i - sIndex + 1);
+            throw new Error(`missing close parenthesis -- ${script}`);
           }
         } else {
-          throw new Error("parse error");
+          const script = format.substr(sIndex, i - sIndex + 1);
+          throw new Error(`missing semi-colon -- ${script}`);
         }
       } else if (parseLiteral("}}")) {
         break;
       } else {
-        throw new Error("parse error");
+        throw new Error(`missing close braces at ${i}`);
       }
     }
     return work;
