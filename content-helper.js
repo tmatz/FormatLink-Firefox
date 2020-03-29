@@ -16,114 +16,21 @@ function FormatLink_copyTextToClipboard(text) {
   document.execCommand("copy");
 }
 
-function FormatLink_formatLinkAsText(format, newline, linkUrl, linkText) {
-  function getFirstLinkInSelection(selection) {
-    return selection.anchorNode.parentNode.href;
-  }
-
-  function formatURL(format, url, title, selectedText, newline) {
-    const len = format.length;
-    let text = "";
-    let i = 0;
-
-    function parseLiteral(str) {
-      if (format.substr(i, str.length) === str) {
-        i += str.length;
-        return str;
-      } else {
-        return null;
-      }
-    }
-
-    function parseString() {
-      if (i < len) {
-        const quote = format.substr(i++, 1);
-        const startIndex = i;
-        const endIndex = format.indexOf(quote, startIndex);
-        if (endIndex >= 0) {
-          i = endIndex + 1;
-          return format.substr(startIndex, endIndex - startIndex);
-        } else {
-          const ellipsis = format.length > 5 ? "..." : "";
-          const head = format.substr(startIndex, 5) + ellipsis;
-          throw new Error(`parse error: regexp not closed -- ${quote}${head}`);
-        }
-      } else {
-        return null;
-      }
-    }
-
-    function processVar(value) {
-      let work = value;
-      while (i < len) {
-        if (parseLiteral(".s(")) {
-          let arg1 = parseString();
-          if (arg1 && parseLiteral(",")) {
-            let arg2 = parseString();
-            if (arg2 && parseLiteral(")")) {
-              let regex = new RegExp(arg1, "g");
-              work = work.replace(regex, arg2);
-            } else {
-              throw new Error("parse error");
-            }
-          } else {
-            throw new Error("parse error");
-          }
-        } else if (parseLiteral("}}")) {
-          text += work;
-          return;
-        } else {
-          throw new Error("parse error");
-        }
-      }
-    }
-
-    while (i < len) {
-      if (parseLiteral("\\")) {
-        if (parseLiteral("n")) {
-          text += newline;
-          //  isWindows ? "\r\n" : "\n";
-        } else if (parseLiteral("t")) {
-          text += "\t";
-        } else {
-          text += format.substr(i++, 1);
-        }
-      } else if (parseLiteral("{{")) {
-        if (parseLiteral("title")) {
-          processVar(title);
-        } else if (parseLiteral("url")) {
-          processVar(url);
-        } else if (parseLiteral("text")) {
-          processVar(selectedText ? selectedText : title);
-        }
-      } else {
-        text += format.substr(i++, 1);
-      }
-    }
-    return text;
-  }
-
-  let title = document.title;
-  let text = linkText;
-  let href = linkUrl;
-  let selection = window.getSelection();
-  if (selection.rangeCount > 0) {
-    let selectionText = selection.toString().trim();
-    if (!text && selectionText) {
-      text = selectionText;
-    }
-
-    let hrefInSelection = getFirstLinkInSelection(selection);
-    if (!href && hrefInSelection) {
-      href = hrefInSelection;
+function FormatLink_getContentInfo() {
+  function getSelectionInfo() {
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      return {
+        text: selection.toString().trim(),
+        href: selection.anchorNode.parentNode.href
+      };
+    } else {
+      return {};
     }
   }
-  if (!text) {
-    text = title;
-  }
-  if (!href) {
-    href = window.location.href;
-  }
 
-  return formatURL(format, href, title, text, newline);
+  return Object.assign(getSelectionInfo(), {
+    title: document.title,
+    url: window.location.href
+  });
 }
