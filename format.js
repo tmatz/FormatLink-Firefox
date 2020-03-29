@@ -25,7 +25,7 @@ function formatURL(format, url, title, text, href, newline) {
         throw new Error(`parse error: regexp not closed -- ${quote}${head}`);
       }
     } else {
-      return null;
+      throw new Error(`unexpected EOL`);
     }
   }
 
@@ -35,9 +35,9 @@ function formatURL(format, url, title, text, href, newline) {
       if (parseLiteral(".s(")) {
         const sIndex = i;
         let arg1 = parseString();
-        if (arg1 && parseLiteral(",")) {
+        if (arg1 != "" && parseLiteral(",")) {
           let arg2 = parseString();
-          if (arg2 && parseLiteral(")")) {
+          if (arg2 != "" && parseLiteral(")")) {
             let regex = new RegExp(arg1, "g");
             work = work.replace(regex, arg2);
           } else {
