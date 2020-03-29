@@ -53,9 +53,6 @@ function FormatLink_formatLinkAsText(format, newline, linkUrl, linkText) {
 
     function processVar(value) {
       let work = value;
-      if (!parseLiteral("}}")) {
-        throw new Error("parse error");
-      }
       while (i < len) {
         if (parseLiteral(".s(")) {
           let arg1 = parseString();
@@ -70,11 +67,13 @@ function FormatLink_formatLinkAsText(format, newline, linkUrl, linkText) {
           } else {
             throw new Error("parse error");
           }
+        } else if (parseLiteral("}}")) {
+          text += work;
+          return;
         } else {
-          break;
+          throw new Error("parse error");
         }
       }
-      text += work;
     }
 
     while (i < len) {
