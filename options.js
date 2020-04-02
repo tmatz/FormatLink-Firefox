@@ -1,22 +1,26 @@
 async function restoreOptions() {
   const options = await gettingOptions();
   for (let i = 1; i <= 9; ++i) {
-    document.getElementById('title'+i).value = options['title'+i] || '';
-    document.getElementById('format'+i).value = options['format'+i] || '';
+    document.getElementById("title" + i).value = options["title" + i] || "";
+    document.getElementById("format" + i).value = options["format" + i] || "";
   }
-  document.getElementById('createSubmenusCheckbox').checked = options['createSubmenus'];
+  document.getElementById("createSubmenusCheckbox").checked =
+    options["createSubmenus"];
 }
 
 async function saveOptions(defaultFormatID) {
   let options;
   try {
-    options = defaultFormatID ?
-      {'defaultFormat': defaultFormatID} : await gettingOptions();
+    options = defaultFormatID
+      ? { defaultFormat: defaultFormatID }
+      : await gettingOptions();
     for (let i = 1; i <= 9; ++i) {
-      options['title'+i] = document.getElementById('title'+i).value;
-      options['format'+i] = document.getElementById('format'+i).value;
+      options["title" + i] = document.getElementById("title" + i).value;
+      options["format" + i] = document.getElementById("format" + i).value;
     }
-    options['createSubmenus'] = document.getElementById('createSubmenusCheckbox').checked;
+    options["createSubmenus"] = document.getElementById(
+      "createSubmenusCheckbox"
+    ).checked;
   } catch (err) {
     console.error("failed to get options", err);
   }
@@ -34,24 +38,27 @@ async function saveOptions(defaultFormatID) {
 
 async function restoreDefaults() {
   for (let i = 1; i <= 9; ++i) {
-    document.getElementById('title'+i).value = DEFAULT_OPTIONS['title'+i] || '';
-    document.getElementById('format'+i).value = DEFAULT_OPTIONS['format'+i] || '';
+    document.getElementById("title" + i).value =
+      DEFAULT_OPTIONS["title" + i] || "";
+    document.getElementById("format" + i).value =
+      DEFAULT_OPTIONS["format" + i] || "";
   }
-  document.getElementById('createSubmenusCheckbox').checked = DEFAULT_OPTIONS['createSubmenus'];
-  return saveOptions(DEFAULT_OPTIONS['defaultFormat']);
+  document.getElementById("createSubmenusCheckbox").checked =
+    DEFAULT_OPTIONS["createSubmenus"];
+  return saveOptions(DEFAULT_OPTIONS["defaultFormat"]);
 }
 
 async function init() {
   await restoreOptions();
-  document.getElementById('saveButton').
-    addEventListener('click', function(e) {
+  document.getElementById("saveButton").addEventListener("click", function(e) {
+    e.preventDefault();
+    saveOptions();
+  });
+  document
+    .getElementById("restoreDefaultsButton")
+    .addEventListener("click", function(e) {
       e.preventDefault();
-      saveOptions();
-    });
-  document.getElementById('restoreDefaultsButton').
-    addEventListener('click', function(e) {
-      e.preventDefault();
-      restoreDefaults()
+      restoreDefaults();
     });
 }
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener("DOMContentLoaded", init);
