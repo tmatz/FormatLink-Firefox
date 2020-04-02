@@ -70,11 +70,11 @@ async function copyLinkToClipboard(format, linkUrl, linkText) {
     });
 
     return formatURL(
-      format ?? "",
-      href ?? linkUrl ?? url ?? "",
-      title ?? "",
-      text ?? linkText ?? title ?? "",
-      url ?? "",
+      format || "",
+      href || linkUrl || url || "",
+      title || "",
+      text || linkText || title || "",
+      url || "",
       newline
     );
   } catch (err) {

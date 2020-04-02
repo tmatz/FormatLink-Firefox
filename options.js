@@ -78,7 +78,7 @@ async function init() {
       restoreDefaults();
     });
   for (let i = 1; i <= 8; i++) {
-    document.getElementById("swap" + i)?.addEventListener("click", function(e) {
+    document.getElementById("swap" + i).addEventListener("click", function(e) {
       e.preventDefault();
       swapFormats(e, 1);
     });
