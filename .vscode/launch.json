@@ -10,7 +10,7 @@
       "reAttach": true,
       "name": "Launch add-on",
       "addonPath": "${workspaceFolder}",
-      "url": "https://www.mozilla.org/",
+      "url": "https://firefox.org/",
       "pathMappings": []
     }
   ]
