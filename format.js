@@ -30,31 +30,48 @@ function formatURL(format, url, title, text, href, newline) {
   }
 
   function processVar(value) {
+    let active = true;
     let work = value;
     while (i < len) {
       if (parseLiteral(".s(")) {
-        const sIndex = i;
-        let arg1 = parseString();
-        if (arg1 != "" && parseLiteral(",")) {
-          let arg2 = parseString();
-          if (arg2 != "" && parseLiteral(")")) {
-            let regex = new RegExp(arg1, "g");
-            work = work.replace(regex, arg2);
-          } else {
-            const script = format.substr(sIndex, i - sIndex + 1);
-            throw new Error(`missing close parenthesis -- ${script}`);
-          }
-        } else {
-          const script = format.substr(sIndex, i - sIndex + 1);
-          throw new Error(`missing semi-colon -- ${script}`);
+        // .s(/arg1/arg2/)
+        const arg1 = parseString();
+        i--;
+        const arg2 = parseString();
+        if (!parseLiteral(")")) {
+          throw new Error(`missing close parenthesis at ${i}`);
+        }
+        const regex = new RegExp(arg1, "g");
+        if (active) {
+          work = work.replace(regex, arg2);
+        }
+      } else if (parseLiteral(".m(")) {
+        // .m(/arg/)
+        const arg = parseString();
+        if (!parseLiteral(")")) {
+          throw new Error(`missing close parenthesis at ${i}`);
+        }
+        const regex = new RegExp(arg);
+        if (!regex.test(work)) {
+          active = false;
+          work = "";
+        }
+      } else if (parseLiteral(".m!(")) {
+        // .m!(/arg/)
+        const arg = parseString();
+        if (!parseLiteral(")")) {
+          throw new Error(`missing close parenthesis at ${i}`);
+        }
+        const regex = new RegExp(arg);
+        if (regex.test(work)) {
+          active = false;
+          work = "";
         }
       } else if (parseLiteral("}}")) {
-        break;
-      } else {
-        throw new Error(`missing close braces at ${i}`);
+        return work;
       }
     }
-    return work;
+    throw new Error(`missing close braces at ${i}`);
   }
 
   let result = "";
