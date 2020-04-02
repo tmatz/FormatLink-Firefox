@@ -40,10 +40,10 @@ Also if you want to change the default format, you can press the "Set as default
 
 ## Flexible settings
 
-You can modify formats in [Tools] -> [Extensions] -> Clik "Options" link in "Format Link" Extension.
+You can modify formats in [Tools] -> [Extensions] -> Click "Options" link in "Format Link" Extension.
 In format settings, you can use the mini template language.
 
-- {{variable}}
+- `{{variable}}`
   - variable = title / url / text
   - The value of variable `title` is the HTML page title.
   - The value of variable `text` is the selected text if some text is selected,
@@ -52,12 +52,16 @@ In format settings, you can use the mini template language.
   - The value of the variable `url` is the link if you open the context menu over a link,
     the first link if selection contains a link, or the HTML page URL otherwise.
   - No spaces are allowed between variable name and braces.
-- {{variable.s("foo","bar")}}
+- `{{variable.s(/foo/bar/)}}`
   - Which means `variable.replace(new RegExp("foo", 'g'), "bar")`
-  - You can use escape character \ in strings.
+  - Escape character \ is not work in '.s()'.
+    Instead, you can choose any charactor for string termination instead of `/`.    
+    For example, `.s("foo"bar")` `.s(:foo:bar:)` `.s(|foo|bar|)` has the same meen.
   - You must escape the first argument for string and regexp.
-    For example, `.s("\\[","\\[")` means replacing `\[` with `\\[`
-  - You can chain multiple .s("foo","bar")
+    For example, `.s(/\[/\[/)` means replacing `[` with `\[`
+  - You can chain multiple .s(/foo/bar/)
+- `{{variable.m(/pattern/)}}` `{{variable.m!(/pattern/)}}`
+  - Which meens conditional.
 - You can use the escape character \ in strings. For example, you need to escape `\` with `\` like `\\`,
   and also you need to escape `{` with `\` like `\{`. See the LaTeX example below.
 - Other characters are treated as literal strings.
@@ -67,7 +71,7 @@ Here are examples:
 - Markdown
 
 ```
-[{{text.s("\\[","\\[").s("\\]","\\]")}}]({{url.s("\\)","%29")}})
+[{{text.s(/\[/\[/).s(/\]/\]/)}}]({{url.s(/\)/%29/)}})
 ```
 
 - reST
@@ -79,7 +83,7 @@ Here are examples:
 - HTML
 
 ```
-<a href="{{url.s("\"","&quot;")}}">{{text.s("<","&lt;")}}</a>
+<a href="{{url.s(/\"/&quot;/)}}">{{text.s(/</&lt;/)}}</a>
 ```
 
 - Text
@@ -91,7 +95,7 @@ Here are examples:
 - Redmine Texitile
 
 ```
-"{{title.s("\"","&quot;").s("\\[","&#91;")}}":{{url}}
+"{{title.s(/"/&quot;/).s(/\[/&#91;/)}}":{{url}}
 ```
 
 - LaTeX
