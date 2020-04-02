@@ -6,6 +6,9 @@ form {
 form > * {
   margin: 8px;
 }
+input.format {
+  font-family: monospace;
+}
 #title1 {
   grid-row: 1;
   grid-column: 1;
