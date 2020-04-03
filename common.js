@@ -3,7 +3,7 @@ const FORMAT_MAX_COUNT = 9;
 const DEFAULT_OPTIONS = {
   defaultFormat: "1",
   title1: "Markdown",
-  format1: "[{{text.s(/\\[/\\[/).s(/\\]/\\]/)}}]({{url.s(/\\)/%29;/)}})",
+  format1: "[{{text.s(/\\[/\\[/).s(/\\]/\\]/)}}]({{url.s(/\\)/%29/)}})",
   title2: "reST",
   format2: "`{{text}} <{{url}}>`_",
   title3: "Text",
