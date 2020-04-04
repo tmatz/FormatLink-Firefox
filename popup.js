@@ -7,39 +7,33 @@ function populateText(formattedText) {
 
 function populateFormatGroup(options) {
   const defaultFormat = options["defaultFormat"];
-  let radios = [];
-  const cnt = getFormatCount(options);
-  let group = document.getElementById("formatGroup");
-  while (group.hasChildNodes()) {
-    group.removeChild(group.childNodes[0]);
-  }
-  for (let i = 1; i <= cnt; ++i) {
-    let radioId = "format" + i;
-
-    let btn = document.createElement("input");
-    btn.setAttribute("type", "radio");
-    btn.setAttribute("name", "fomrat");
-    btn.setAttribute("id", radioId);
-    btn.setAttribute("value", i);
-    if (i == defaultFormat) {
-      btn.setAttribute("checked", "checked");
+  const group = document.getElementById("formatGroup");
+  const domParser = new DOMParser();
+  group.innerHTML = "";
+  for (let rule of getRuleCandidates(options)) {
+    const label = domParser
+      .parseFromString(
+        `<label>
+          <input type="radio" name="format" id="format${rule.no}" value="${rule.no}"></input>
+        </label>`,
+        "text/html"
+      )
+      .querySelector("body > label");
+    const text = document.createTextNode(rule.title);
+    if (options["title" + defaultFormat] == rule.title) {
+      label.style.fontWeight = "bold";
     }
-    btn.addEventListener("click", async e => {
-      const formatID = e.target.value;
-      const format = options["format" + formatID];
-      const formattedText = await copyLinkToClipboard(format);
-      populateText(formattedText);
-    });
-
-    let optTitle = options["title" + i];
-    let text = document.createTextNode(optTitle);
-
-    let label = document.createElement("label");
-    label.appendChild(btn);
     label.appendChild(text);
-
+    optional(label.querySelector("input"), (input) => {
+      input.addEventListener("click", async (e) => {
+        populateText(await copyLinkToClipboard(rule.format));
+      });
+    });
     group.appendChild(label);
   }
+  optional(group.querySelector(`input[value="${defaultFormat}"]`), (btn) => {
+    btn.checked = true;
+  });
 }
 
 function getSelectedFormatID() {
@@ -60,7 +54,7 @@ async function init() {
       if (formatID) {
         await browser.runtime.sendMessage({
           messageID: "update-default-format",
-          formatID
+          formatID,
         });
       }
     });

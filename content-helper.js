@@ -22,7 +22,7 @@ function FormatLink_getContentInfo() {
     if (selection.rangeCount > 0) {
       return {
         text: selection.toString().trim(),
-        href: selection.anchorNode.parentNode.href
+        href: selection.anchorNode.parentNode.href,
       };
     } else {
       return {};
@@ -31,6 +31,6 @@ function FormatLink_getContentInfo() {
 
   return Object.assign(getSelectionInfo(), {
     title: document.title,
-    url: window.location.href
+    url: window.location.href,
   });
 }

@@ -2,11 +2,13 @@
   "name": "formatlink-firefox-modified",
   "version": "0.0.1",
   "scripts": {
+    "prettier": "prettier --write .",
     "run": "web-ext run -p debug",
-    "build": "web-ext build --overwrite-dest -i package*.json",
+    "build": "web-ext lint && web-ext build --overwrite-dest -i package*.json",
     "sign": "web-ext sign "
   },
   "devDependencies": {
+    "prettier": "^2.0.2",
     "web-ext": "^4.1.0"
   }
 }

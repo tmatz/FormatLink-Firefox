@@ -20,8 +20,16 @@ const DEFAULT_OPTIONS = {
   format8: "",
   title9: "",
   format9: "",
-  createSubmenus: false
+  createSubmenus: false,
 };
+
+function optional(target, some, none) {
+  if (target) {
+    return typeof some === "function" ? some(target) : some;
+  } else {
+    return typeof none === "function" ? none() : none;
+  }
+}
 
 async function gettingOptions() {
   options = await browser.storage.sync.get(null);
@@ -31,28 +39,45 @@ async function gettingOptions() {
   return options;
 }
 
-function getFormatCount(options) {
-  let i;
-  for (i = 1; i <= 9; ++i) {
-    let optTitle = options["title" + i];
-    let optFormat = options["format" + i];
-    if (optTitle === "" || optFormat === "") {
+function* getRules$(options) {
+  for (let no = 1; no < 100; no++) {
+    const titleKey = "title" + no;
+    const formatKey = "format" + no;
+    if (!(titleKey in options) || !(formatKey in options)) {
       break;
     }
+    yield {
+      no: `${no}`,
+      title: options[titleKey],
+      format: options[formatKey],
+    };
   }
-  return i - 1;
+}
+
+function getRuleCandidates(options) {
+  const found = new Map();
+  for (let rule of getRules$(options)) {
+    if (!found.has(rule.title) && rule.title && rule.format) {
+      found.set(rule.title, rule);
+    }
+  }
+  return found.values();
+}
+
+async function saveDefaultFormat(formatID) {
+  await browser.storage.sync.set({ defaultFormat: formatID });
 }
 
 async function requireContentScript() {
   const results = await browser.tabs.executeScript({
-    code: "typeof FormatLink_copyLinkToClipboard === 'function';"
+    code: "typeof FormatLink_copyLinkToClipboard === 'function';",
   });
   // The content script's last expression will be true if the function
   // has been defined. If this is not the case, then we need to run
   // content-helper.js to define function copyToClipboard.
   if (!results || results[0] !== true) {
     await browser.tabs.executeScript({
-      file: "content-helper.js"
+      file: "content-helper.js",
     });
   }
   // content-helper.js defines functions FormatLink_formatLinkAsText
@@ -66,7 +91,7 @@ async function copyLinkToClipboard(format, linkUrl, linkText) {
     const newline = browser.runtime.PlatformOs === "win" ? "\r\n" : "\n";
 
     const [{ title, url, text, href }] = await browser.tabs.executeScript({
-      code: "FormatLink_getContentInfo();"
+      code: "FormatLink_getContentInfo();",
     });
 
     const formattedText = formatURL(
@@ -79,7 +104,7 @@ async function copyLinkToClipboard(format, linkUrl, linkText) {
     );
 
     await browser.tabs.executeScript({
-      code: `FormatLink_copyTextToClipboard(${JSON.stringify(formattedText)});`
+      code: `FormatLink_copyTextToClipboard(${JSON.stringify(formattedText)});`,
     });
 
     return formattedText;
@@ -107,13 +132,11 @@ function creatingContextMenuItem(props) {
 async function createContextMenus(options) {
   await browser.contextMenus.removeAll();
   if (options.createSubmenus) {
-    const count = getFormatCount(options);
-    for (let i = 0; i < count; i++) {
-      let format = options["title" + (i + 1)];
+    for (let rule of getRuleCandidates(options)) {
       await creatingContextMenuItem({
-        id: "format-link-format" + (i + 1),
-        title: "as " + format,
-        contexts: ["all"]
+        id: "format-link-format" + rule.no,
+        title: "as " + rule.title,
+        contexts: ["all"],
       });
     }
   } else {
@@ -121,7 +144,7 @@ async function createContextMenus(options) {
     await creatingContextMenuItem({
       id: "format-link-format-default",
       title: "Format Link as " + defaultFormat,
-      contexts: ["all"]
+      contexts: ["all"],
     });
   }
 }
