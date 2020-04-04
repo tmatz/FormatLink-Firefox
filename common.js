@@ -69,7 +69,7 @@ async function copyLinkToClipboard(format, linkUrl, linkText) {
       code: "FormatLink_getContentInfo();"
     });
 
-    return formatURL(
+    const formattedText = formatURL(
       format || "",
       href || linkUrl || url || "",
       title || "",
@@ -77,6 +77,12 @@ async function copyLinkToClipboard(format, linkUrl, linkText) {
       url || "",
       newline
     );
+
+    await browser.tabs.executeScript({
+      code: `FormatLink_copyTextToClipboard(${JSON.stringify(formattedText)});`
+    });
+
+    return formattedText;
   } catch (err) {
     // This could happen if the extension is not allowed to run code in
     // the page, for example if the tab is a privileged page.
