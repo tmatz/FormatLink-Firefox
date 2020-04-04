@@ -15,6 +15,9 @@ function populateFormatGroup(options) {
       <input type="radio" name="format" id="format${rule.no}" value="${rule.no}">
       </input>`;
     const innerText = document.createTextNode(rule.title);
+    if (options["title" + defaultFormat] == rule.title) {
+      label.style.fontWeight = "bold";
+    }
     label.appendChild(innerText);
     optional(label.querySelector("input"), input => {
       input.addEventListener("click", async e => {
