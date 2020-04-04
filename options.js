@@ -9,11 +9,8 @@ async function restoreOptions() {
 }
 
 async function saveOptions(defaultFormatID) {
-  let options;
+  const options = {};
   try {
-    options = defaultFormatID
-      ? { defaultFormat: defaultFormatID }
-      : await gettingOptions();
     for (let i = 1; i <= 9; ++i) {
       options["title" + i] = document.getElementById("title" + i).value;
       options["format" + i] = document.getElementById("format" + i).value;
@@ -21,6 +18,8 @@ async function saveOptions(defaultFormatID) {
     options["createSubmenus"] = document.getElementById(
       "createSubmenusCheckbox"
     ).checked;
+    options.defaultFormat =
+      defaultFormatID || (await gettingOptions().defaultFormat);
   } catch (err) {
     console.error("failed to get options", err);
   }
