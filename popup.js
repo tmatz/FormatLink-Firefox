@@ -7,39 +7,25 @@ function populateText(formattedText) {
 
 function populateFormatGroup(options) {
   const defaultFormat = options["defaultFormat"];
-  let radios = [];
-  const cnt = getFormatCount(options);
-  let group = document.getElementById("formatGroup");
-  while (group.hasChildNodes()) {
-    group.removeChild(group.childNodes[0]);
-  }
-  for (let i = 1; i <= cnt; ++i) {
-    let radioId = "format" + i;
-
-    let btn = document.createElement("input");
-    btn.setAttribute("type", "radio");
-    btn.setAttribute("name", "fomrat");
-    btn.setAttribute("id", radioId);
-    btn.setAttribute("value", i);
-    if (i == defaultFormat) {
-      btn.setAttribute("checked", "checked");
-    }
-    btn.addEventListener("click", async e => {
-      const formatID = e.target.value;
-      const format = options["format" + formatID];
-      const formattedText = await copyLinkToClipboard(format);
-      populateText(formattedText);
+  const group = document.getElementById("formatGroup");
+  group.innerHTML = "";
+  for (let rule of getRuleCandidates(options)) {
+    const label = document.createElement("label");
+    label.innerHTML = `
+      <input type="radio" name="format" id="format${rule.no}" value="${rule.no}">
+      </input>`;
+    const innerText = document.createTextNode(rule.title);
+    label.appendChild(innerText);
+    optional(label.querySelector("input"), input => {
+      input.addEventListener("click", async e => {
+        populateText(await copyLinkToClipboard(rule.format));
+      });
     });
-
-    let optTitle = options["title" + i];
-    let text = document.createTextNode(optTitle);
-
-    let label = document.createElement("label");
-    label.appendChild(btn);
-    label.appendChild(text);
-
     group.appendChild(label);
   }
+  optional(group.querySelector(`input[value="${defaultFormat}"]`), btn => {
+    btn.checked = true;
+  });
 }
 
 function getSelectedFormatID() {

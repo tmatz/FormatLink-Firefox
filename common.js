@@ -23,6 +23,14 @@ const DEFAULT_OPTIONS = {
   createSubmenus: false
 };
 
+function optional(target, some, none) {
+  if (target) {
+    return typeof some === "function" ? some(target) : some;
+  } else {
+    return typeof none === "function" ? none() : none;
+  }
+}
+
 async function gettingOptions() {
   options = await browser.storage.sync.get(null);
   if (Object.keys(options).length === 0) {
@@ -31,16 +39,29 @@ async function gettingOptions() {
   return options;
 }
 
-function getFormatCount(options) {
-  let i;
-  for (i = 1; i <= 9; ++i) {
-    let optTitle = options["title" + i];
-    let optFormat = options["format" + i];
-    if (optTitle === "" || optFormat === "") {
+function* getRules$(options) {
+  for (let no = 1; no < 100; no++) {
+    const titleKey = "title" + no;
+    const formatKey = "format" + no;
+    if (!(titleKey in options) || !(formatKey in options)) {
       break;
     }
+    yield {
+      no: `${no}`,
+      title: options[titleKey],
+      format: options[formatKey]
+    };
   }
-  return i - 1;
+}
+
+function getRuleCandidates(options) {
+  const found = new Map();
+  for (let rule of getRules$(options)) {
+    if (!found.has(rule.title) && rule.title && rule.format) {
+      found.set(rule.title, rule);
+    }
+  }
+  return found.values();
 }
 
 async function saveDefaultFormat(formatID) {
@@ -111,12 +132,10 @@ function creatingContextMenuItem(props) {
 async function createContextMenus(options) {
   await browser.contextMenus.removeAll();
   if (options.createSubmenus) {
-    const count = getFormatCount(options);
-    for (let i = 0; i < count; i++) {
-      let format = options["title" + (i + 1)];
+    for (let rule of getRuleCandidates(options)) {
       await creatingContextMenuItem({
-        id: "format-link-format" + (i + 1),
-        title: "as " + format,
+        id: "format-link-format" + rule.no,
+        title: "as " + rule.title,
         contexts: ["all"]
       });
     }
