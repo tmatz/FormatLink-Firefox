@@ -93,10 +93,15 @@ async function init() {
     elem.dataNo = elem.id.replace(/^[a-z-]*/, "");
   }
   await restoreOptions();
-  optional(document.getElementById("restoreDefaultsButton"), it => {
-    it.addEventListener("click", function(e) {
+  optional(document.getElementById("restoreDefaultsButton"), elem => {
+    elem.addEventListener("click", e => {
       e.preventDefault();
       restoreDefaults();
+    });
+  });
+  optional(document.getElementById("createSubmenusCheckbox"), elem => {
+    elem.addEventListener("click", e => {
+      saveOptions();
     });
   });
   for (let elem of document.querySelectorAll("input.item[type=text]")) {
