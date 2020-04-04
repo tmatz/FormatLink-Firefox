@@ -43,6 +43,10 @@ function getFormatCount(options) {
   return i - 1;
 }
 
+async function saveDefaultFormat(formatID) {
+  await browser.storage.sync.set({ defaultFormat: formatID });
+}
+
 async function requireContentScript() {
   const results = await browser.tabs.executeScript({
     code: "typeof FormatLink_copyLinkToClipboard === 'function';"

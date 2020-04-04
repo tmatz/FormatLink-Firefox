@@ -1,7 +1,3 @@
-async function saveDefaultFormat(formatID) {
-  await browser.storage.sync.set({ defaultFormat: formatID });
-}
-
 function isLinkable(tab) {
   return tab.url && tab.url.match(/^https?:/i);
 }
