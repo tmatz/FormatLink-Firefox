@@ -52,17 +52,22 @@ In format settings, you can use the mini template language.
   - The value of the variable `url` is the link if you open the context menu over a link,
     the first link if selection contains a link, or the HTML page URL otherwise.
   - No spaces are allowed between variable name and braces.
-- `{{variable.s(/foo/bar/)}}`
-  - Which means `variable.replace(new RegExp("foo", 'g'), "bar")`
-  - Escape character \ is not work in '.s()'.
-    Instead, you can choose any charactor for string termination instead of `/`.    
-    For example, `.s("foo"bar")` `.s(:foo:bar:)` `.s(|foo|bar|)` has the same meen.
-  - You must escape the first argument for string and regexp.
-    For example, `.s(/\[/\[/)` means replacing `[` with `\[`
-  - You can chain multiple .s(/foo/bar/)
-- `{{variable.m(/pattern/)}}` `{{variable.m!(/pattern/)}}`
-  - Which meens conditional.
-- You can use the escape character \ in strings. For example, you need to escape `\` with `\` like `\\`,
+- Operator modifies the variable.
+  - `{{variable.s(/foo/bar/)}}`
+    - Which means `variable.replace(new RegExp("foo", 'g'), "bar")`
+    - Escape character \ is not work in '.s()'.
+      Instead, you can choose any charactor for string termination instead of `/`.  
+      For example, `.s("foo"bar")`, `.s(:foo:bar:)`, `.s(|foo|bar|)` have the same mean.
+    - You must escape the first argument for string and regexp.
+      For example, `.s(/\[/\[/)` means replacing `[` with `\[`
+  - `{{variable.m(/pattern/)}}` and `{{variable.m!(/pattern/)}}`
+    - Which means conditional.
+    - If `pattern` does not match the input, result of whole of `{{variable}}` becomes empty string.
+    - `.m!()` is opposite.
+  - `{{variable.r(/pattern/name/)`
+    - Which replaces the occurrence of `pattern` with value of variable `name`.
+  - You can chain multiple operators like `{{title.m(...).r(...).s(...).s(...)}}`.
+- You can use the escape character \ in strings outside `{{variable}}`. For example, you need to escape `\` with `\` like `\\`,
   and also you need to escape `{` with `\` like `\{`. See the LaTeX example below.
 - Other characters are treated as literal strings.
 
