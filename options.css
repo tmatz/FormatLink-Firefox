@@ -1,6 +1,6 @@
 form {
   display: grid;
-  grid-template-columns: 150px 1fr auto;
+  grid-template-columns: min-content 150px 1fr min-content;
   margin: 16px;
 }
 form > * {
@@ -36,14 +36,17 @@ form > .item8 {
 form > .item9 {
   grid-row: 9;
 }
-form > .title {
+form > .default {
   grid-column: 1;
 }
-form > .format {
+form > .title {
   grid-column: 2;
 }
-form > .swap {
+form > .format {
   grid-column: 3;
+}
+form > .swap {
+  grid-column: 4;
   position: relative;
   top: 50%;
   border-radius: 2px;

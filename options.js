@@ -3,6 +3,8 @@ async function restoreOptions() {
   for (let i = 1; i <= 9; ++i) {
     document.getElementById("title" + i).value = options["title" + i] || "";
     document.getElementById("format" + i).value = options["format" + i] || "";
+    document.getElementById("default" + i).checked =
+      options["defaultFormat"] == i;
   }
   document.getElementById("createSubmenusCheckbox").checked =
     options["createSubmenus"];
@@ -62,25 +64,45 @@ async function swapFormats(e, delta) {
     format1.value = format2.value;
     format2.value = tmp;
   }
+  saveOptions();
 }
 
 async function init() {
   await restoreOptions();
-  document.getElementById("saveButton").addEventListener("click", function(e) {
-    e.preventDefault();
-    saveOptions();
-  });
   document
     .getElementById("restoreDefaultsButton")
     .addEventListener("click", function(e) {
       e.preventDefault();
       restoreDefaults();
     });
+  for (let elem of document.querySelectorAll("input.item[type=text]")) {
+    elem.addEventListener("focus", e => {
+      e.target.dataSavedValue = e.target.value;
+    });
+    elem.addEventListener("blur", e => {
+      if (e.target.dataSavedValue !== e.target.value) {
+        delete e.target.dataSavedValue;
+        saveOptions();
+      }
+    });
+  }
+  for (let i = 1; i <= 9; i++) {
+    document.getElementById("default" + i).addEventListener("click", e => {
+      saveDefaultFormat(`${i}`);
+    });
+  }
   for (let i = 1; i <= 8; i++) {
     document.getElementById("swap" + i).addEventListener("click", function(e) {
       e.preventDefault();
       swapFormats(e, 1);
     });
   }
+  async function handleMessage(request, sender, sendResponse) {
+    if (request.messageID === "update-default-format") {
+      const formatID = request.formatID;
+      document.getElementById("default" + formatID).checked = true;
+    }
+  }
+  browser.runtime.onMessage.addListener(handleMessage);
 }
 document.addEventListener("DOMContentLoaded", init);
