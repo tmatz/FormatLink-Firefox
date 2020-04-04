@@ -74,18 +74,22 @@ async function swapFormats(elem) {
 async function init() {
   optional(document.getElementById("formatGroup"), (group) => {
     const num = 9;
-    const div = document.createElement("div");
+    const domParser = new DOMParser();
     for (let i = 1; i <= num; i++) {
-      div.innerHTML = `
-        <input type="radio" id="default${i}" class="item item--${i} item--default" name="defaultFormat"></input>
-        <input type="text" id="title${i}" class="item item--${i} item--title" placeholder="Title${i}"></input>
-        <input type="text" id="format${i}" class="item item--${i} item--format" placeholder="Format${i}"></textarea>
-        <button id="swap${i}" class="btn item item${i} item--swap">⇕</button>`;
+      const dom = domParser.parseFromString(
+        `<input type="radio" id="default${i}" class="item item--${i} item--default" name="defaultFormat"/>
+        <input type="text" id="title${i}" class="item item--${i} item--title" placeholder="Title${i}"/>
+        <input type="text" id="format${i}" class="item item--${i} item--format" placeholder="Format${i}"/>
+        <button id="swap${i}" class="btn item item${i} item--swap">⇕</button>`,
+        "text/html"
+      );
       if (i == num) {
-        div.removeChild(div.querySelector(".item--swap"));
+        optional(dom.querySelector(".item--swap"), (it) => {
+          it.remove();
+        });
       }
-      while (div.hasChildNodes()) {
-        group.appendChild(div.firstChild);
+      for (let elem of dom.querySelectorAll("body > *")) {
+        group.appendChild(elem);
       }
     }
   });

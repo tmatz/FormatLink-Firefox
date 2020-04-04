@@ -8,17 +8,22 @@ function populateText(formattedText) {
 function populateFormatGroup(options) {
   const defaultFormat = options["defaultFormat"];
   const group = document.getElementById("formatGroup");
+  const domParser = new DOMParser();
   group.innerHTML = "";
   for (let rule of getRuleCandidates(options)) {
-    const label = document.createElement("label");
-    label.innerHTML = `
-      <input type="radio" name="format" id="format${rule.no}" value="${rule.no}">
-      </input>`;
-    const innerText = document.createTextNode(rule.title);
+    const label = domParser
+      .parseFromString(
+        `<label>
+          <input type="radio" name="format" id="format${rule.no}" value="${rule.no}"></input>
+        </label>`,
+        "text/html"
+      )
+      .querySelector("body > label");
+    const text = document.createTextNode(rule.title);
     if (options["title" + defaultFormat] == rule.title) {
       label.style.fontWeight = "bold";
     }
-    label.appendChild(innerText);
+    label.appendChild(text);
     optional(label.querySelector("input"), (input) => {
       input.addEventListener("click", async (e) => {
         populateText(await copyLinkToClipboard(rule.format));
