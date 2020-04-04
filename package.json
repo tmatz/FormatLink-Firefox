@@ -4,7 +4,7 @@
   "scripts": {
     "prettier": "prettier --write .",
     "run": "web-ext run -p debug",
-    "build": "web-ext build --overwrite-dest -i package*.json",
+    "build": "web-ext lint && web-ext build --overwrite-dest -i package*.json",
     "sign": "web-ext sign "
   },
   "devDependencies": {
