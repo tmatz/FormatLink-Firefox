@@ -3,10 +3,10 @@ async function restoreOptions() {
   for (let elem of document.querySelectorAll(".item--title,.item--format")) {
     elem.value = options[elem.id] || "";
   }
-  optional(document.getElementById("default" + options.defaultFormat), it => {
+  optional(document.getElementById("default" + options.defaultFormat), (it) => {
     it.checked = true;
   });
-  optional(document.getElementById("createSubmenusCheckbox"), it => {
+  optional(document.getElementById("createSubmenusCheckbox"), (it) => {
     it.checked = options.createSubmenus;
   });
 }
@@ -17,7 +17,7 @@ async function saveOptions() {
     for (let elem of document.querySelectorAll(".item--title,.item--format")) {
       options[elem.id] = elem.value;
     }
-    optional(document.getElementById("createSubmenusCheckbox"), it => {
+    optional(document.getElementById("createSubmenusCheckbox"), (it) => {
       options.createSubmenus = it.checked;
     });
   } catch (err) {
@@ -40,16 +40,16 @@ async function restoreDefaults() {
   for (let elem of document.querySelectorAll(".item--title,.item--format")) {
     elem.value = options[elem.id] || "";
   }
-  optional(document.getElementById("default" + options.defaultFormat), it => {
+  optional(document.getElementById("default" + options.defaultFormat), (it) => {
     it.checked = true;
   });
-  optional(document.getElementById("createSubmenusCheckbox"), it => {
+  optional(document.getElementById("createSubmenusCheckbox"), (it) => {
     it.checked = options.createSubmenus;
   });
   await saveOptions();
   await browser.runtime.sendMessage({
     messageID: "update-default-format",
-    formatID: options.defaultFormat
+    formatID: options.defaultFormat,
   });
 }
 
@@ -72,7 +72,7 @@ async function swapFormats(elem) {
 }
 
 async function init() {
-  optional(document.getElementById("formatGroup"), group => {
+  optional(document.getElementById("formatGroup"), (group) => {
     const num = 9;
     const div = document.createElement("div");
     for (let i = 1; i <= num; i++) {
@@ -93,22 +93,22 @@ async function init() {
     elem.dataNo = elem.id.replace(/^[a-z-]*/, "");
   }
   await restoreOptions();
-  optional(document.getElementById("restoreDefaultsButton"), elem => {
-    elem.addEventListener("click", e => {
+  optional(document.getElementById("restoreDefaultsButton"), (elem) => {
+    elem.addEventListener("click", (e) => {
       e.preventDefault();
       restoreDefaults();
     });
   });
-  optional(document.getElementById("createSubmenusCheckbox"), elem => {
-    elem.addEventListener("click", e => {
+  optional(document.getElementById("createSubmenusCheckbox"), (elem) => {
+    elem.addEventListener("click", (e) => {
       saveOptions();
     });
   });
   for (let elem of document.querySelectorAll("input.item[type=text]")) {
-    elem.addEventListener("focus", e => {
+    elem.addEventListener("focus", (e) => {
       e.target.dataSavedValue = e.target.value;
     });
-    elem.addEventListener("blur", e => {
+    elem.addEventListener("blur", (e) => {
       if (e.target.dataSavedValue !== e.target.value) {
         delete e.target.dataSavedValue;
         saveOptions();
@@ -116,15 +116,15 @@ async function init() {
     });
   }
   for (let elem of document.querySelectorAll(".item--default")) {
-    elem.addEventListener("click", e => {
+    elem.addEventListener("click", (e) => {
       browser.runtime.sendMessage({
         messageID: "update-default-format",
-        formatID: e.target.dataNo
+        formatID: e.target.dataNo,
       });
     });
   }
   for (let elem of document.querySelectorAll(".item--swap")) {
-    elem.addEventListener("click", e => {
+    elem.addEventListener("click", (e) => {
       e.preventDefault();
       swapFormats(e.target);
     });

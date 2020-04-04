@@ -1,32 +1,29 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8"/>
-<title>FormatLink Extension's Popup</title>
-<link rel="stylesheet" href="popup.css"></link>
-</head>
-<body>
-
-<form>
-<fieldset>
-<label>Copied Text:</label>
-<div>
-<textarea id="textToCopy" rows="4"></textarea>
-</div>
-</fieldset>
-
-<fieldset>
-<label>Switch Format:</label>
-<div id="formatGroup">
-</div>
-</fieldset>
-<fieldset>
-<button id="saveDefaultFormatButton">Set as default</button>
-<button id="openOptionsPage">Options...</button>
-</fieldset>
-</form>
-<script src="format.js"></script>
-<script src="common.js"></script>
-<script src="popup.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>FormatLink Extension's Popup</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <form>
+      <fieldset>
+        <label>Copied Text:</label>
+        <div>
+          <textarea id="textToCopy" rows="4"></textarea>
+        </div>
+      </fieldset>
+      <fieldset>
+        <label>Switch Format:</label>
+        <div id="formatGroup"></div>
+      </fieldset>
+      <fieldset>
+        <button id="saveDefaultFormatButton">Set as default</button>
+        <button id="openOptionsPage">Options...</button>
+      </fieldset>
+    </form>
+    <script src="format.js"></script>
+    <script src="common.js"></script>
+    <script src="popup.js"></script>
+  </body>
 </html>

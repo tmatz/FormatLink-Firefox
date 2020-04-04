@@ -19,14 +19,14 @@ function populateFormatGroup(options) {
       label.style.fontWeight = "bold";
     }
     label.appendChild(innerText);
-    optional(label.querySelector("input"), input => {
-      input.addEventListener("click", async e => {
+    optional(label.querySelector("input"), (input) => {
+      input.addEventListener("click", async (e) => {
         populateText(await copyLinkToClipboard(rule.format));
       });
     });
     group.appendChild(label);
   }
-  optional(group.querySelector(`input[value="${defaultFormat}"]`), btn => {
+  optional(group.querySelector(`input[value="${defaultFormat}"]`), (btn) => {
     btn.checked = true;
   });
 }
@@ -49,7 +49,7 @@ async function init() {
       if (formatID) {
         await browser.runtime.sendMessage({
           messageID: "update-default-format",
-          formatID
+          formatID,
         });
       }
     });

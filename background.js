@@ -14,14 +14,14 @@ function showHidePageAction(tab) {
   }
 }
 
-(async function() {
-  browser.tabs.query({}).then(tabs => tabs.forEach(showHidePageAction));
+(async function () {
+  browser.tabs.query({}).then((tabs) => tabs.forEach(showHidePageAction));
 
   browser.tabs.onUpdated.addListener((id, changeInfo, tab) =>
     showHidePageAction(tab)
   );
 
-  browser.commands.onCommand.addListener(async command => {
+  browser.commands.onCommand.addListener(async (command) => {
     try {
       const prefix = "copy-link-in-format";
       if (command.startsWith(prefix)) {
@@ -69,7 +69,7 @@ function showHidePageAction(tab) {
         const options = await gettingOptions();
         const defaultFormat = options["title" + request.formatID];
         await browser.contextMenus.update("format-link-format-default", {
-          title: "Format Link as " + defaultFormat
+          title: "Format Link as " + defaultFormat,
         });
         sendResponse({ response: "default format updated" });
       } else {

@@ -20,7 +20,7 @@ const DEFAULT_OPTIONS = {
   format8: "",
   title9: "",
   format9: "",
-  createSubmenus: false
+  createSubmenus: false,
 };
 
 function optional(target, some, none) {
@@ -49,7 +49,7 @@ function* getRules$(options) {
     yield {
       no: `${no}`,
       title: options[titleKey],
-      format: options[formatKey]
+      format: options[formatKey],
     };
   }
 }
@@ -70,14 +70,14 @@ async function saveDefaultFormat(formatID) {
 
 async function requireContentScript() {
   const results = await browser.tabs.executeScript({
-    code: "typeof FormatLink_copyLinkToClipboard === 'function';"
+    code: "typeof FormatLink_copyLinkToClipboard === 'function';",
   });
   // The content script's last expression will be true if the function
   // has been defined. If this is not the case, then we need to run
   // content-helper.js to define function copyToClipboard.
   if (!results || results[0] !== true) {
     await browser.tabs.executeScript({
-      file: "content-helper.js"
+      file: "content-helper.js",
     });
   }
   // content-helper.js defines functions FormatLink_formatLinkAsText
@@ -91,7 +91,7 @@ async function copyLinkToClipboard(format, linkUrl, linkText) {
     const newline = browser.runtime.PlatformOs === "win" ? "\r\n" : "\n";
 
     const [{ title, url, text, href }] = await browser.tabs.executeScript({
-      code: "FormatLink_getContentInfo();"
+      code: "FormatLink_getContentInfo();",
     });
 
     const formattedText = formatURL(
@@ -104,7 +104,7 @@ async function copyLinkToClipboard(format, linkUrl, linkText) {
     );
 
     await browser.tabs.executeScript({
-      code: `FormatLink_copyTextToClipboard(${JSON.stringify(formattedText)});`
+      code: `FormatLink_copyTextToClipboard(${JSON.stringify(formattedText)});`,
     });
 
     return formattedText;
@@ -136,7 +136,7 @@ async function createContextMenus(options) {
       await creatingContextMenuItem({
         id: "format-link-format" + rule.no,
         title: "as " + rule.title,
-        contexts: ["all"]
+        contexts: ["all"],
       });
     }
   } else {
@@ -144,7 +144,7 @@ async function createContextMenus(options) {
     await creatingContextMenuItem({
       id: "format-link-format-default",
       title: "Format Link as " + defaultFormat,
-      contexts: ["all"]
+      contexts: ["all"],
     });
   }
 }
